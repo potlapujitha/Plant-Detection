@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plant Detection Website</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background: #eafaea;
+    }
+    h1 {
+      color: #21926b;
+    }
+    #results {
+      margin-top: 2em;
+    }
+    .result-card {
+      background: #fff;
+      margin-bottom: 1.2em;
+      padding: 1em;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(30,45,45,0.08);
+      display: flex;
+      align-items: center;
+      max-width: 350px;
+    }
+    .result-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 1em;
+      border: 1px solid #c1c1c1;
+    }
+    .result-info {
+      flex: 1;
+    }
+    .detected-label {
+      font-weight: bold;
+      color: #196e3b;
+    }
+    .sample-images {
+      display: flex;
+      gap: 1em;
+      margin-bottom: 2em;
+    }
+    .sample-images img {
+      border: 2px solid #22926b;
+      border-radius: 8px;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <h1>Plant Detection Demo Website</h1>
+  <div>
+    <strong>Sample Plant Images:</strong>
+    <div class="sample-images">
+      <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Aloe Vera">
+      <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80" alt="Ficus Leaf">
+    </div>
+    <em>You can upload up to 3 of your own plant images below:</em>
+  </div>
+  <form id="imageForm" enctype="multipart/form-data">
+    <input type="file" id="imageInput" accept="image/*" multiple>
+    <button type="submit">Start Detection</button>
+    <p>(Max 3 images. Supported: jpg, jpeg, png, etc.)</p>
+  </form>
+  <div id="results"></div>
+  <script>
+    const form = document.getElementById("imageForm");
+    const input = document.getElementById("imageInput");
+    const results = document.getElementById("results");
+
+    // Demo labels
+    const mockLabels = [
+      "Aloe Vera (Healthy)",
+      "Ficus Leaf (Possible Mildew)",
+      "Cactus (Healthy)"
+    ];
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      results.innerHTML = "";
+      const files = input.files;
+      if (!files.length) {
+        alert("Please select plant images.");
+        return;
+      }
+      if (files.length > 3) {
+        alert("Select up to 3 images only.");
+        return;
+      }
+
+      Array.from(files).forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          const card = document.createElement("div");
+          card.className = "result-card";
+          const detected = mockLabels[idx % mockLabels.length];
+          card.innerHTML = `
+            <img src="${ev.target.result}" alt="Plant Image">
+            <div class="result-info">
+              <div><span class="detected-label">${detected}</span></div>
+              <div><small>Detection complete.</small></div>
+            </div>
+          `;
+          results.appendChild(card);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  </script>
+</body>
+</html>
